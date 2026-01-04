@@ -13,10 +13,10 @@ impl Solution {
                 Ok(equal_index) => {
                     result.push(equal_index);
                     break;
-                },
+                }
                 Err(_) => {
                     result = vec![];
-                },
+                }
             }
         }
 
@@ -27,7 +27,7 @@ impl Solution {
         for index in start_index..nums.len() {
             return index as i32;
         }
-        
+
         panic!("Incorrect input");
     }
 
@@ -37,7 +37,7 @@ impl Solution {
                 return Ok(index as i32);
             }
         }
-        
+
         Err(())
     }
 }
