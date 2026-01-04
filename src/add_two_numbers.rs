@@ -44,7 +44,10 @@ impl Solution {
             med.reverse();
 
             for (i, &num) in med.iter().enumerate() {
-                result += num as u128 * 10u128.pow((med.len() - i - 1) as u32);
+                let num: u128 = num.try_into().unwrap();
+                let rate = 10u128.pow((med.len() - i - 1) as u32);
+    
+                result += num * rate;
             }
         }
 
@@ -58,15 +61,21 @@ impl Solution {
             med.push(String::from(num).parse().unwrap());
         }
 
+        if med.len() > 0 {
+            return Self::vec_to_list(med);
+        }
+
+        None
+    }
+
+    fn vec_to_list(vec: Vec<i32>) -> Option<Box<ListNode>> {
         let mut previous: Option<Box<ListNode>> = None;
 
-        if med.len() > 0 {
-            for &num in med.iter() {
-                previous = Some(Box::new(ListNode {
-                    val: num,
-                    next: previous,
-                }));
-            }
+        for &num in vec.iter() {
+            previous = Some(Box::new(ListNode {
+                val: num,
+                next: previous,
+            }));
         }
 
         previous
@@ -77,46 +86,30 @@ impl Solution {
 mod tests {
     #[test]
     fn test_add_two_numbers() {
-        // TODO: shortify it
         let examples = vec![
             (
-                Some(Box::new(super::ListNode{
-                    val: 2,
-                    next: Some(Box::new(super::ListNode{
-                        val: 4,
-                        next: Some(Box::new(super::ListNode{
-                            val: 3,
-                            next: None,
-                        })),
-                    })),
-                })),
-                Some(Box::new(super::ListNode{
-                    val: 5,
-                    next: Some(Box::new(super::ListNode{
-                        val: 6,
-                        next: Some(Box::new(super::ListNode{
-                            val: 4,
-                            next: None,
-                        })),
-                    })),
-                })),
-                Some(Box::new(super::ListNode{
-                    val: 7,
-                    next: Some(Box::new(super::ListNode{
-                        val: 0,
-                        next: Some(Box::new(super::ListNode{
-                            val: 8,
-                            next: None,
-                        })),
-                    })),
-                })),
+                vec![2, 4, 3],
+                vec![5, 6, 4],
+                vec![7, 0, 8],
+            ),
+            (
+                vec![2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,9],
+                vec![5,6,4,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,2,4,3,9,9,9,9],
+                vec![7,0,8,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,4,8,6,1,4,3,9,1]
             )
         ];
 
-        for (l1, l2, expected) in examples {
-            let result = super::Solution::add_two_numbers(l1, l2);
+        for (mut l1, mut l2, mut expected) in examples {
+            l1.reverse();
+            l2.reverse();
+            expected.reverse();
 
-            assert_eq!(result, expected);
+            let result = super::Solution::add_two_numbers(
+                super::Solution::vec_to_list(l1),
+                super::Solution::vec_to_list(l2)
+            );
+
+            assert_eq!(result, super::Solution::vec_to_list(expected));
         }
     }
 }
