@@ -56,7 +56,7 @@ mod tests {
 
         for (nums, target) in examples {
             // clone nums to avoid ownership issues because of hard two_sum() method contract
-            let result = crate::two_sum::Solution::two_sum(nums.clone(), target);
+            let result = super::Solution::two_sum(nums.clone(), target);
             let expected = nums[result[0] as usize] + nums[result[1] as usize];
 
             assert_eq!(expected, target);
@@ -65,7 +65,7 @@ mod tests {
 
     #[test]
     fn test_two_sum_failure() {
-        let result = crate::two_sum::Solution::two_sum(vec![1, 2, 3], 7);
+        let result = super::Solution::two_sum(vec![1, 2, 3], 7);
 
         assert_eq!(result.len(), 0);
     }
