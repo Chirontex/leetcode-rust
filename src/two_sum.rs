@@ -1,5 +1,4 @@
 // https://leetcode.com/problems/two-sum
-#[allow(dead_code)]
 pub struct Solution;
 
 #[allow(dead_code)]
