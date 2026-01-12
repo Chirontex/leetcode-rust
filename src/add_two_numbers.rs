@@ -18,55 +18,62 @@ struct Solution;
 
 #[allow(dead_code)]
 impl Solution {
-    // TODO: "1567 / 1569 testcases passed", so must keep working on it
-    // TODO: move private methods to a trait implementation
     pub fn add_two_numbers(
         l1: Option<Box<ListNode>>,
         l2: Option<Box<ListNode>>,
     ) -> Option<Box<ListNode>> {
-        Self::decompile_number(Self::compile_number(&l1) + Self::compile_number(&l2))
-    }
+        let mut result: Vec<i32> = vec![];
+        let mut additional: i32 = 0;
+        let mut n1 = &l1;
+        let mut n2 = &l2;
 
-    fn compile_number(list: &Option<Box<ListNode>>) -> u128 {
-        let mut result: u128 = 0;
-        let mut med: Vec<i32> = vec![];
-        let mut current_node = list;
+        loop {
+            let v: i32;
+            let v1 = Self::get_val_from_node(n1);
+            let v2 = Self::get_val_from_node(n2);
 
-        while let Some(node) = current_node {
-            med.push(node.val);
-
-            current_node = &node.next;
-        }
-
-        if med.len() > 0 {
-            med.reverse();
-
-            for (i, &num) in med.iter().enumerate() {
-                let num: u128 = num.try_into().unwrap();
-                let rate = 10u128.pow((med.len() - i - 1) as u32);
-
-                result += num * rate;
+            if (v1 == 0 && n1.is_none()) && (v2 == 0 && n2.is_none()) && additional == 0 {
+                break;
             }
+
+            v = v1 + v2 + additional;
+
+            if v >= 10 {
+                additional = 1;
+                result.push(v - 10);
+            } else {
+                additional = 0;
+                result.push(v);
+            }
+
+            n1 = Self::get_next_node(n1);
+            n2 = Self::get_next_node(n2);
         }
 
-        result
+        if result.is_empty() {
+            result.push(0);
+        }
+
+        result.reverse();
+
+        Self::vec_to_reverse_list(result)
     }
 
-    fn decompile_number(number: u128) -> Option<Box<ListNode>> {
-        let mut med: Vec<i32> = vec![];
-
-        for num in number.to_string().chars() {
-            med.push(String::from(num).parse().unwrap());
+    fn get_val_from_node(node: &Option<Box<ListNode>>) -> i32 {
+        match node {
+            Some(n) => n.val,
+            None => 0,
         }
-
-        if med.len() > 0 {
-            return Self::vec_to_list(med);
-        }
-
-        None
     }
 
-    fn vec_to_list(vec: Vec<i32>) -> Option<Box<ListNode>> {
+    fn get_next_node(node: &Option<Box<ListNode>>) -> &Option<Box<ListNode>> {
+        match node {
+            Some(n) => &n.next,
+            None => &None,
+        }
+    }
+
+    fn vec_to_reverse_list(vec: Vec<i32>) -> Option<Box<ListNode>> {
         let mut previous: Option<Box<ListNode>> = None;
 
         for &num in vec.iter() {
@@ -111,11 +118,11 @@ mod tests {
             expected.reverse();
 
             let result = super::Solution::add_two_numbers(
-                super::Solution::vec_to_list(l1),
-                super::Solution::vec_to_list(l2),
+                super::Solution::vec_to_reverse_list(l1),
+                super::Solution::vec_to_reverse_list(l2),
             );
 
-            assert_eq!(result, super::Solution::vec_to_list(expected));
+            assert_eq!(result, super::Solution::vec_to_reverse_list(expected));
         }
     }
 }
